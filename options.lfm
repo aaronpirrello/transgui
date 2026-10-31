@@ -270,7 +270,7 @@ inherited OptionsForm: TOptionsForm
       object gbSysInt: TGroupBox
         Left = 8
         Height = 71
-        Top = 172
+        Top = 204
         Width = 523
         Anchors = [akTop, akLeft, akRight]
         Caption = 'System integration'
@@ -307,6 +307,25 @@ inherited OptionsForm: TOptionsForm
         OnMouseDown = cbLanguageMouseDown
         Style = csDropDownList
         TabOrder = 6
+      end
+      object txTheme: TLabel
+        Left = 8
+        Height = 15
+        Top = 177
+        Width = 40
+        Caption = 'Theme:'
+        ParentColor = False
+        Visible = False
+      end
+      object cbTheme: TComboBox
+        Left = 248
+        Height = 23
+        Top = 174
+        Width = 136
+        ItemHeight = 15
+        Style = csDropDownList
+        TabOrder = 7
+        Visible = False
       end
     end
   end

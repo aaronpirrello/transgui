@@ -150,6 +150,9 @@ resourcestring
   sBiDiRightLeft = 'Right->Left';
   sBiDiRightLeftNoAlign = 'Right->Left (No Align)';
   sBiDiRightLeftReadOnly = 'Right->Left (Reading Only)';
+  sThemeSystem = 'System';
+  sThemeLight = 'Light';
+  sThemeDark = 'Dark';
 
   sPrivateOn = 'ON';
   sPrivateOff = 'OFF';

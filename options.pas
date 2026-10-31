@@ -49,6 +49,7 @@ type
     cbLangLeftRight: TComboBox;
     cbLinksFromClipboard: TCheckBox;
     cbShowAddTorrentWindow: TCheckBox;
+    cbTheme: TComboBox;
     cbTrayClose: TCheckBox;
     cbTrayIconAlways: TCheckBox;
     cbTrayMinimize: TCheckBox;
@@ -68,6 +69,7 @@ type
     txDays: TLabel;
     tabGeneral: TTabSheet;
     txPerc: TLabel;
+    txTheme: TLabel;
     Page: TPageControl;
     tabAdvanced: TTabSheet;
     txLanguage: TLabel;
@@ -87,6 +89,7 @@ type
     procedure OKButtonClick(Sender: TObject);
   private
     FLangList: TStringList;
+    FTheme: integer;
 {$ifdef mswindows}
     FRegExt: boolean;
     FRegMagnet: boolean;
@@ -154,6 +157,13 @@ begin
 
 {$ifdef mswindows}
   gbSysInt.Visible:=True;
+  txTheme.Visible:=True;
+  cbTheme.Visible:=True;
+  cbTheme.Items.Add(sThemeSystem);
+  cbTheme.Items.Add(sThemeLight);
+  cbTheme.Items.Add(sThemeDark);
+  FTheme:=ReadThemeSetting;
+  cbTheme.ItemIndex:=FTheme;
   reg:=TRegistry.Create;
   try
     if reg.OpenKeyReadOnly('Software\Classes\.torrent') then begin
@@ -282,6 +292,13 @@ begin
   bd :=Ini.ReadInteger ('Interface', 'IgnoreRightLeft', 0);
   Ini.WriteInteger     ('Interface', 'IgnoreRightLeft', idx);
   if idx <> bd then restart:=True;
+
+{$ifdef mswindows}
+  if cbTheme.ItemIndex <> FTheme then begin
+    Ini.WriteInteger('Interface', 'Theme', cbTheme.ItemIndex);
+    restart:=True;
+  end;
+{$endif mswindows}
 
 {$ifdef mswindows}
   reg:=TRegistry.Create;
