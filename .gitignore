@@ -52,3 +52,7 @@ Release/
 
 # transgui binary
 /transgui
+
+# Vendored MetaDarkStyle: keep its resource source, ignore its unit output
+!/metadarkstyle/src/CustomDark.lrs
+/metadarkstyle/lib/
