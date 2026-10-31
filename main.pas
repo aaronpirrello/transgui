@@ -1146,6 +1146,13 @@ begin
     Result:=AddToColor(Result, i, i, i);
 end;
 
+function IsDarkColor(Color: TColor): boolean;
+var c: TColor;
+begin
+  c:=ColorToRGB(Color);
+  Result:=(c and $FF < $80) and ((c shr 8) and $FF < $80) and ((c shr 16) and $FF < $80);
+end;
+
 function LocateFile(const FileName: string; const Paths: array of string): string;
 var
   i: integer;
@@ -1905,7 +1912,11 @@ begin
   acAltSpeed.ImageIndex:=-1;
   tbtAltSpeed.ImageIndex:=i;
 {$endif}
-  txTransferHeader.Color:=GetLikeColor(clBtnFace, -15);
+  if IsDarkColor(clBtnFace) then
+    // GetLikeColor amplifies the delta for dark colors, which turns the header almost black
+    txTransferHeader.Color:=AddToColor(clBtnFace, 20, 20, 20)
+  else
+    txTransferHeader.Color:=GetLikeColor(clBtnFace, -15);
   txTorrentHeader.Color:=txTransferHeader.Color;
   txTransferHeader.Caption:=' ' + txTransferHeader.Caption;
   txTorrentHeader.Caption:=' ' + txTorrentHeader.Caption;
