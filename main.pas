@@ -49,6 +49,10 @@ const
   AppName = 'Transmission Remote GUI';
   AppVersion = '5.18.0';
 
+  ThemeSystem = 0;
+  ThemeLight  = 1;
+  ThemeDark   = 2;
+
 resourcestring
   sAll = 'All torrents';
   sWaiting = 'Waiting';
@@ -836,6 +840,7 @@ end;
 function ExcludeInvalidChar (path: string): string; // PETROV
 function GetBiDi: TBiDiMode;
 function CheckAppParams: boolean;
+function ReadThemeSetting: integer;
 procedure LoadTranslation;
 function GetHumanSize(sz: double; RoundTo: integer = 0; const EmptyStr: string = '-'): string;
 function PriorityToStr(p: integer; var ImageIndex: integer): string;
@@ -966,6 +971,9 @@ uses
 {$ifdef darwin}
   urllistenerosx,
 {$endif darwin}
+{$ifdef windows}
+  uDarkStyleParams, uDarkStyleSchemes, uMetaDarkStyle,
+{$endif windows}
   synacode, ConnOptions, clipbrd, DateUtils, TorrProps, DaemonOptions, About,
   ToolWin, download, ColSetup, AddLink, MoveTorrent, AddTracker, lcltype,
   Options, ButtonPanel, BEncode, synautil, Math, FolderHistory;
@@ -1283,6 +1291,28 @@ begin
     Result:=ADefault;
 end;
 
+function ReadThemeSetting: integer;
+begin
+  Result:=Ini.ReadInteger('Interface', 'Theme', ThemeSystem);
+  if (Result < ThemeSystem) or (Result > ThemeDark) then
+    Result:=ThemeSystem;
+end;
+
+{$ifdef windows}
+procedure ApplyTheme;
+begin
+  case ReadThemeSetting of
+    ThemeLight:
+      exit; // Keep the native light theme untouched
+    ThemeDark:
+      PreferredAppMode:=pamForceDark;
+    else
+      PreferredAppMode:=pamAllowDark; // Follow the Windows app theme
+  end;
+  ApplyMetaDarkStyle(DefaultDark);
+end;
+{$endif windows}
+
 function CheckAppParams: boolean;
 var
   i: integer;
@@ -1339,6 +1369,9 @@ begin
 
   Ini:=TIniFileUtf8.Create(FHomeDir+ChangeFileExt(ExtractFileName(ParamStrUTF8(0)), '.ini'));
   Ini.CacheUpdates:=True;
+{$ifdef windows}
+  ApplyTheme;
+{$endif windows}
 
   // Check for outdated IPC file
   if FileExistsUTF8(FIPCFileName) then begin
