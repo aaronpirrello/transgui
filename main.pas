@@ -978,7 +978,7 @@ uses
   uDarkStyleParams, uDarkStyleSchemes, uMetaDarkStyle,
 {$endif windows}
   synacode, ConnOptions, clipbrd, DateUtils, TorrProps, DaemonOptions, About,
-  ToolWin, download, ColSetup, AddLink, MoveTorrent, AddTracker, lcltype,
+  ToolWin, download, ColSetup, AddLink, MoveTorrent, AddTracker, lcltype, GraphType,
   Options, ButtonPanel, BEncode, synautil, Math, FolderHistory;
 
   {TMyHashMap}
@@ -1622,6 +1622,23 @@ end;
 { TMainForm }
 
 function TMainForm.CreateScaledImages(ASize: integer): TImageList;
+
+  function HasPixels(AImages: TImageList; AIndex: integer): boolean;
+  var
+    RawImg: TRawImage;
+    p: PRGBAQuad;
+    j: integer;
+  begin
+    Result:=False;
+    AImages.GetRawImage(AIndex, RawImg);
+    p:=PRGBAQuad(RawImg.Data);
+    if p = nil then
+      exit;
+    for j:=0 to RawImg.DataSize div SizeOf(TRGBAQuad) - 1 do
+      if p[j].Alpha <> 0 then
+        exit(True);
+  end;
+
 var
   Ico: TIcon;
   IconCount, i: integer;
@@ -1644,7 +1661,10 @@ begin
     Ico:=TIcon.Create;
     try
       for i:=0 to IconCount - 1 do begin
-        if (ASize > ImageList16.Width) and (i < ImageList32.Count) then
+        // ImageList32 has artwork only for some indexes (mainly the toolbar);
+        // its other slots are empty, so fall back to upscaling ImageList16.
+        if (ASize > ImageList16.Width) and (i < ImageList32.Count) and
+           ((i >= ImageList16.Count) or HasPixels(ImageList32, i)) then
           SourceImages:=ImageList32
         else if i < ImageList16.Count then
           SourceImages:=ImageList16
