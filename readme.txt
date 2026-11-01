@@ -194,10 +194,10 @@ BigToolBarHeight=48
 ; 1=Shows dates relative to now, 0=Shows absolute dates using the system date and time format
 FromNow=1
 *********************************************************************************
-Big Icons
+Icons
 
 Farm-Fresh Fatcow Web Hosting
-http://www.fatcow.com/
+http://www.fatcow.com/free-icons
 License Creative Commons (Attribution 3.0 United States)
 https://creativecommons.org/licenses/by/3.0/us/legalcode
 
